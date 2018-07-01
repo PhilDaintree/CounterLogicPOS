@@ -1,0 +1,10 @@
+style "user-font"
+{
+    font_name="Sans Serif 14"
+    bg[NORMAL]        = "#d6ebf9"        # Main Menu BACKGROUND colour
+	bg[PRELIGHT]      = "#d6ebf9"        # active highlight
+	bg[ACTIVE]        = "#b3dbf5"        # darker secondary b'ground - rarely used - where (Firefox scroll bar)??
+	bg[SELECTED]      = "#b3dbf5"        # active highlight - was -> #5058a0
+	bg[INSENSITIVE]   = "#d6ebf9"        # lighter minor background
+}
+widget_class "*" style "user-font"

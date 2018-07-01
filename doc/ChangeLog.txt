@@ -1,0 +1,73 @@
+Counter Logic Point Of Sale
+
+WWW: http://www.logicworks.co.nz
+Email: support@logicworks.co.nz
+
+20/10/17 rouding to next 100th of a cent and change calculated should now be consistent with total ... a rounding issue sometimes made it inconsistent
+
+7/5/16 0.30
+7/5/16 Enabled xml-rpc calls to work over https (secure sockets)
+
+29/3/15 0.29
+
+28/3/15 Fixed bug that would not allow payment methods to be properly mapped to GL accounts in webERP.
+
+22/11/14 0.28 Release
+
+22/11/14 Fixed bug when the customer is changed and discounted prices updated the Sale Total is now correctly updated
+
+3/11/14 0.27 Release
+
+3/11/14 Receipt now just says INVOICE not TAX INVOICE - and shows all 20 characters of the SKU and on a new line shows 32 characters of the description and if the description of the item exceeds 32 characters shows the balance of the description on the next line
+3/11/14 Receipt now prints out the different media used to settle the transaction
+
+
+22/3/14 0.26 Release
+
+12/3/14 Fixed bug that prevented the payment method GL mapping dialog from showing
+12/3/14 Fixed bug that didn't increment the quantity and recalculate the line total following a rescan of an existing item
+12/3/14 Fixed bug that didn't increment the quantity and recalculate the line and sale total following pressing + or decrement the quantity when pressing the minus key
+12/3/14 Fixed bug that didn't actually refresh the customer data with the default customer on the completion of a sale - the previous customer details are still on the sale until a new customer was selected.
+
+25/2/14 0.25 Release
+
+20/2/14 Added line variable to flag if the user has entered a manual price which will prohibit recalculation of prices on this line with changes in quantity
+20/2/14 Now removes the customer label once the sale is complete - the customer reverts to the default cash customer
+15/2/14 Fixed bug that prevented the new users dialog from showing
+15/2/14 Modified the webERP/includes/Z_POSDataCreation.php to create the POS data including the disount matrix data and the stockmaster to include the discount category
+14/2/14 Added new table for discount matrix and new logic to enable the data to be used in a similar way as webERP to get a net price
+
+
+0.24 Release
+0.23 Release
+
+28/8/12 Linker removed login xml-rpc call - as all other calls use user name and password
+28/8/12 CounterLogic made user combo box selection self. so it can be referenced from outside the dialog box class itself.
+
+0.22 Release 5/8/12
+
+5/8/12 Linker duplicated receipts fixed
+5/8/12 Linker duplicated invoices fixed
+5/8/12 Linker now correctly splits up a mixed invoice/credit for a sale and a return on the same POS transaction
+5/8/12 Linker allocation calls - fixed webERP api to correctly allocate negative receipts (payments) also exchange rates used in receipts when processed into webERP
+5/8/12 CounterLogic made sqllite result sets use fetchall() rather than iterate over result sets - flacky behaviour fixed
+
+0.21 Release 30/7/12
+
+30/7/12 Linker convert transno to str before contacenating
+30/7/12 Linker now correctly works out the orddate to use allowing for webERP DefaultDateFormat in d.m.Y, m.d.Y as well as d/m/Y or m/d/Y
+
+0.20 Release
+
+23/7/12 Fix bugs with receipt printing
+23/7/12 Kernel driver for USB disconnected if POSIX - not supported by windows
+23/7/12 Receipt prints tax
+
+0.19 Release 21/7/12
+
+20/7/12 Installation can now be in any directory
+20/7/12 Receipt now prints customer name if not the default cash sales customer
+20/7/12 Receipt now prints total tax included in the gross amount
+
+
+0.18 - First Windows release

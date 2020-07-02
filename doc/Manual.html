@@ -16,7 +16,7 @@
 <p><img src="../images/Zadig.jpg"></p>
 <p>It can be tricky to identify which device is the receipt printer, so if you pull the USB cord out and have another look the printer should have gone. Make sure you get the correct USB device for the printer and select it. Then select the WinUSB driver (which is the default) and click install. Keep a note of the USB product ID and the vendor ID reported by Zadig as these need to be entered into the CounterLogic options dialog to CounterLogic knows which device is the receipt printer. To enter the product ID and vendor ID of the USB printer into Counter Logic POS, run the POS (login as user &quot;a&quot; with password &quot;a&quot; unless you have already set up an administrative user) and ignore (click through) the warnings about there being no receipt printer attached. Click on Tools->Options to bring up the options dialog box then enter the ProductID and VendorID noted when installing the driver. Ensure you get the ProductID and VendorID around the right way. Logging off from Counter Logic POS and logging back in should see the warnings about no receipt printer gone.</p>
 <br />
-<p><a target="_blank" href="http://www.logicworks.co.nz/ReceiptPrinterInstall.mp4">Video showing how to install the printer</a>. Note that a windows driver is not required and should not be installed as this will take over the USB port and prevent the Counter Logic POS communicating with the printer.</p>
+<p><a target="_blank" href="http://www.logicworks.co.nz/ReceiptPrinterInstall.mp4">Video showing how to install the printer</a>. Note that a windows driver is not required and should not be installed as this will take over the USB port and prevent the Counter Logic communicating with the printer.</p>
 <h4>Technical details of Receipt Printer Support</h4>
 <p>Printer support is provided using "pyusb" - the python USB library to communicate directly with the USB port that the printer is connected to. The pyusb python library and libusb-1.0 needs to be installed on a python installation for CounterLogic POS to work at all. A section of the pythons esc/pos code from Manuel Martinez has been used and incorporated into CounterLogic python scripts. These requirements are all handled by the windows setup script (using the libusbx libusb-1.0.dll which is copied to the windows system folder - the WinUSB driver communicates to the device through libusb-1.0.dll). This set up allows a single code base to be completely platform neutral.</p>
 <br />
@@ -48,6 +48,35 @@ Other configuration points:
 <li>If there are a lot of stock items the timeout of your php installation may need to be changed. It is normally set to default 60 seconds. Examine your php.ini typically in /etc directory of your web server and alter the setting for max_execution_time = 600 and default_socket_timeout = 600 It may not be necessary to update this value for smaller databases.</li>
 <li>Set up users. Only a system admin user can access the user screen under File -> User Maintenance. The default system admin user of userid="a" password="a" should be deleted.</li>
 <li>Set up the webERP bank accounts to use for each webERP payment method. Under Tools -> Payment Method Mapping. The bank account entered should correspond to a valid webERP bank account (there is no error trapping so a mistake here will be fatal!). The payment methods imported from webERP will display (once the first webERP upload has been performed). In webERP the payment methods must be set up to show if the cash drawer needs to be opened when there is a sale and there is an amount tendered in the payment type. e.g. for an EFTPOS payment there is obviously no need to open the cash drawer to deposit money. However, if the payment method is cash or cheque then the operator will need to deposit the cash or cheque in the cash drawer and potentially give change.</li>
+</ul>
+
+
+<p><h4>Debugging the Communication Between Your webERP installation and Counter Logic POS</h4></p>
+<p>
+If you are unable to identify the problem in your configuration then here are some pointers:</p>
+<ul>
+	<li>When you run Linker.py full and you get ouput like:
+		<blockquote>Traceback (most recent call last):<br />
+		  File "/mnt/old_disk/home/phil/ownCloud/CounterLogic/Linker.py", line 367, in module<br />
+			MakePOSUploadFile = x_server.weberp.xmlrpc_CreatePOSDataFull(Config['DebtorNo'],Config['BranchCode'],Config['webERPuser'],Config['webERPpwd'])<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 1243, in __call__<br />
+			return self.__send(self.__name, args)<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 1602, in __request<br />
+			verbose=self.__verbose<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 1283, in request<br />
+			return self.single_request(host, handler, request_body, verbose)<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 1316, in single_request<br />
+			return self.parse_response(response)<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 1491, in parse_response<br />
+			p.close()<br />
+		  File "/usr/lib/python2.7/xmlrpclib.py", line 567, in close<br />
+			parser.Parse("", 1) # end of data<br />
+		xml.parsers.expat.ExpatError: no element found: line 1, column 0<br />
+		http://weberp.org/weberp/api/api_xml-rpc.php<br />
+		</blockquote>
+Then this looks like the xml-rpc call to CreatePOSDataFull is not working - this is the webERP api method to create the zip file of the necessary data to download to the POS. This method code is in the webERP/api/api_webERPSettings.php script and calls a function CreatePOSDataFull which is in turn in includes/Z_POSDataCreation.php. In the Counter Logic code there is a script Z_POS_Data.php that will call this function and create the data archive. Upload this script to the webERP installation and enter the URL to run it http://YourServer/webERP/Z_POS_Data.php enter the parameters and run the POS data creation function. If it fails with the message ERROR Report : Unable to create POS Data file. In most cases a more specific message will be returned identifying why it failed. If this function fails then problem lies with the webERP installation - it is nothing to do with the api configuration.</li>
+<li>If the Z_POS_Data.php fails to make the data file then it could be for a number of reasons - the most likely being that the zip compression module is not enabled in the php installation on the web-server. Or the server permissions set do not allow creation of files in the companies/your_company_db/reportwriter/ folder</li>
+<li>Check again that the webERP installation/api/api-php.php file has the correct database name on line 6 - $api_DatabaseName='YOUR_webERP_DATABASE_NAME';</li>
 </ul>
 
 <br />
@@ -157,14 +186,14 @@ If there is a problem running CounterLogic run it directly from a command line a
 </i>
 </blockquote>
 As of Linux Mint Oliva (15) the python-usb package is old and the latest pyserial and pyusb for libusb-1.0 must be installed from:
-<br/><a href="http://sourceforge.net/projects/pyusb/files/PyUSB%201.0/">Sourceforge http://sourceforge.net/projects/pyusb/files/PyUSB%201.0/</a>
+<br/><a href="http://sourceforge.net/projects/pyusb/files/PyUSB%201.0/1.0.0-alpha-3/">Sourceforge http://sourceforge.net/projects/pyusb/files/PyUSB%201.0/</a>
 <br/>Download the latest and extract then go to the place where you extracted it and run:
 <blockquote>
 <i>sudo python setup.py install</i>
 </blockquote>
 <p>Now <a href="https://pypi.python.org/pypi/pyserial">download</a> and <a href=http://pythonhosted.org/pyserial/pyserial.html#installation">install</a> <a href="http://pythonhosted.org/pyserial/">pyserial</a></p>
 <p>Python serial module is required for integration with serial EFTPOS terminals</p>
-<p>When CounterLogic POS is run without a receipt printer attached a message shows that there is no receipt printer - and therefore CounterLogic will not be able to open a cashdrawer - as this happens through sending control codes to the receipt printer. To identify the printer it is necessary to see the devices connected to the USB interface from a terminal type:</p>
+<p>When CounterLogic POS is run without a receipt printer attached a message shows that there is no receipt printer - and therefore CounterLogic with not be able to open a cashdrawer - as this happens through sending control codes to the receipt printer. To identify the printer it is necessary to see the devices connected to the USB interface from a terminal type:</p>
 <blockquote>
 <i>lsusb</i>
 </blockquote>

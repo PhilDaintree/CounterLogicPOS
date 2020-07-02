@@ -368,12 +368,13 @@ if len(sys.argv) == 2:
 		except xmlrpclib.Fault, err:
 			ErrorMessage = "Fatal error could not create the POS upload file on the webERP server"
 			print ErrorMessage
-			LogFileHandle.write(ErrorMessage)
+			print MakePOSUploadFile
+			LogFileHandle.write(ErrorMessage + MakePOSUploadFile)
 			print "XML-RPC Fault logging in error code: %d" % err.faultCode
 			print "Fault string: %s" % err.faultString
-		if MakePOSUploadFile == 1:
-			ErrorMessage = "Failed to create the POS upload file on the webERP server"
-			print ErrorMessage
+		if MakePOSUploadFile != 0:
+			ErrorMessage = "Failed to create the POS upload file on the webERP server" + " " + MakePOSUploadFile
+			print ErrorMessage 
 			LogFileHandle.write(ErrorMessage)
 			sys.exit()
 		try:

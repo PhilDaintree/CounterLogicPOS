@@ -16,7 +16,7 @@ import os #needed to get the path of where the application is running from
 import sys #needed to exit application
 #import serial # needed for EFTPOS integration option to send data to the EFTPOS terminal
 
-Version = '0.33'
+Version = '0.40'
 
 gtk.rc_parse('CounterLogic.rc')
 

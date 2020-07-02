@@ -3,6 +3,11 @@ Counter Logic Point Of Sale
 WWW: http://www.logicworks.co.nz
 Email: support@logicworks.co.nz
 
+
+2/7/20 added some more info about debugging comms between webERP and CounterLogicPOS to the manual
+2/7/20 added Z_POS_Data.php script that can be copied to the webERP installation to allow debugging of the POS Data creation function
+2/7/20 Linker.py added some debugging info error messages
+
 20/10/17 rouding to next 100th of a cent and change calculated should now be consistent with total ... a rounding issue sometimes made it inconsistent
 
 7/5/16 0.30
@@ -71,3 +76,4 @@ Email: support@logicworks.co.nz
 
 
 0.18 - First Windows release
+
